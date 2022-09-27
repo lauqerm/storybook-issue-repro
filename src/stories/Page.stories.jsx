@@ -1,25 +1,31 @@
-import React from 'react';
-import { within, userEvent } from '@storybook/testing-library';
-
+import React, { useState } from 'react';
 import { Page } from './Page';
 
 export default {
-  title: 'Example/Page',
+  title: 'Example Error',
   component: Page,
-  parameters: {
-    // More on Story layout: https://storybook.js.org/docs/react/configure/story-layout
-    layout: 'fullscreen',
-  },
 };
 
-const Template = (args) => <Page {...args} />;
+const Template = (args) => {
+  const [, setState] = useState(false);
 
-// More on interaction testing: https://storybook.js.org/docs/react/writing-tests/interaction-testing
+  return <div>
+    <button onClick={() => setState(true)}>Irrelevant State</button>
+    <p>
+      This demo is working fine and smoothly.<br />
+      Now go to the source code of this page (src/stories/Page.stories.jsx) and uncomment the code inside Template component, the following thing might happens:
+      <ul>
+        <li>The page become unresponsive instantly, you cannot interact with it, or it take a very long time between each interaction</li>
+        <li>The page could not be closed or refreshed manually, I usually need to kill it with Chrome's Task Manager</li>
+        <li>Even if the inital render seems fine, clicking the button (with does nothing but change an unused state) will cause the problems above to occur</li>
+      </ul>
+    </p>
+    <Page
+      irrelevantProps={{
+        irrelevantKey: <div>Irrelevant Content</div>,
+      }}
+    />
+  </div>
+};
+
 export const LoggedOut = Template.bind({});
-
-export const LoggedIn = Template.bind({});
-LoggedIn.play = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
-  const loginButton = await canvas.getByRole('button', { name: /Log in/i });
-  await userEvent.click(loginButton);
-};
